@@ -1,6 +1,5 @@
 import random
 import numpy as np
-import sys
 
 def draw():
     # introduces pileup protons
@@ -15,18 +14,20 @@ def draw():
     _sigma = 0.02
     # expected value of pileup events
     _mean_pileup = 50
-    # calculated probability of finding a pileup proton in one of the PPS arms
-    _p_s = 0.0115695
+    # store proton fraction momentum loss in a list
     _xi1_list = list()
     _xi2_list = list()
     # the number of pileup events is assumed to follow a poisson distribution
     _puEvents = np.random.poisson(_mean_pileup)
     for k in range(_puEvents):
-        _tag = np.random.uniform(0,1,size=None)
-        if _tag <= _p_s:
-            _xi1_list.append(_xi_min*pow(_xi_max/_xi_min, np.random.uniform(0,1,size=None) )*random.gauss(_mu, _sigma))
-        elif _tag > _p_s and _tag <= 2*_p_s:
-            _xi2_list.append(_xi_min*pow(_xi_max/_xi_min, np.random.uniform(0,1,size=None) )*random.gauss(_mu, _sigma))
+        # sign of proton momentum along z axis
+        _sign = np.random.uniform(-1,1,size=None)
+        # random proton xi
+        _randxi = _xi_min*pow(_xi_max/_xi_min, np.random.uniform(0,1,size=None))
+        # random gauss probability
+        _randgauss = random.gauss(_mu, _sigma)
+        # fill proton lists
+        _xi1_list.append(_randxi*_randgauss) if _sign < 0 else _xi2_list.append(_randxi*_randgauss)
     return [_xi1_list, _xi2_list]
 
 def update_event(_event, _i):
