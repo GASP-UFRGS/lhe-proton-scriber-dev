@@ -2,7 +2,7 @@ import sys
 
 def check_args():
     # Receives file path, generator of origin and particle IDs as arguments
-    if len(sys.argv) < 5:
+    if len(sys.argv) < 6:
         print('Missing arguments')
         syntax()
         sys.exit()
@@ -16,17 +16,19 @@ def collect(_args):
     # Collect args
     _inputfile = _args[1]
     _generator = _args[2].lower()
-    _pileup = _args[3]
-    _id = _args[4:]
-    return _inputfile,_generator,_pileup,_id
+    _tag = _args[3]
+    _pileup = _args[4]
+    _id = _args[5:]
+    return _inputfile,_generator,_tag,_pileup,_id
 
 def syntax():
-    print('Syntax: python3 proton-scriber.py <path of .lhe file> <generator> <pileup> <IDs>')
+    print('Syntax: python3 proton-scriber.py <path of .lhe file> <generator> <tag> <pileup> <IDs>')
     print("")
-    print( "<path of .lhe file> -- path to LHE input file")
-    print( "<generator> -- only madgraph or superchic options supported")
-    print( "<pileup> -- True or False for adding pileup protons")
-    print( "<IDs> -- PDG ID of particles for kinematics of scattered proton, e.g., '22 22' ")
+    print(  "<path of .lhe file> -- path to LHE input file")
+    print(  "<generator> -- only madgraph or superchic options supported")
+    print(  "<tag> -- prefix to be added to the output filename")
+    print(  "<pileup> -- True or False for adding pileup protons")
+    print(  "<IDs> -- PDG ID of particles for kinematics of scattered proton, e.g., '22 22' ")
     print("") 
 
 def check_header(_event,_newheader,_generator):

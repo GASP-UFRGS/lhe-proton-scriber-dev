@@ -8,11 +8,11 @@ import write_protons
 
 if __name__ == "__main__":
     # Gather input info
-    inputfile,generator,pileup,ID = checkers.check_args()
+    inputfile,generator,tag,pileup,ID = checkers.check_args()
     # Set proton mass
     m0 = setters.set_proton_mass()
     # Set info
-    outputfile = 'newa_'+inputfile
+    outputfile = tag+"_"+inputfile
     end,flag0,flag1,header,einip,einim,pzinip,pzinim,id1,id2 = setters.set_energy(inputfile,generator)
     # Start event processing
     event = []
