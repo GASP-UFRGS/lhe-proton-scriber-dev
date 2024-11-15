@@ -11,9 +11,9 @@ def draw():
     # mean for the gaussian blur
     _mu = 1
     # standard deviation for the gaussian blur, taken as 2%
-    _sigma = 0.02
+    _sigma = 1
     # expected value of pileup events
-    _mean_pileup = 50
+    _mean_pileup = 5
     # store proton fraction momentum loss in a list
     _xi1_list = list()
     _xi2_list = list()
@@ -42,17 +42,19 @@ def update_event(_event, _i):
     _event[1] = ' '.join(second_element) + '\n'
     return _event
 
-def fill_puprotons(_i,_event,_generator,_pzini,_m0):
+def fill_puprotons(_event,_generator,_pzinip,_pzinim,_m0,_id1,_id2):
+    i=0
     _pu_protons = draw()
+    _pupos = _event.index('<mgrwt>\n')
     for _xi in _pu_protons[0]:
         if _generator == 'superchic':
-            _event.insert(_i+1, ' '*13+f'2212{" "*8}1    0    0    0    0 {0:.9e} {0:.9e} +{(1-_xi)*_pzini:.9e}  {(1-_xi)*_pzini:.9e}  {0:.9e} 0. 9.\n')
+            _event.insert(_pupos, ' '*13+f'2212{" "*8}1    0    0    0    0 {0:.9e} {0:.9e} +{(1-_xi)*_pzinip:.9e}  {(1-_xi)*_pzinip:.9e}  {0:.9e} 0. 9.\n')
         if _generator == 'madgraph':
-            _event.insert(_i+1,' '*5+f'2212{" "*2}1    0    0    0    0 +{0:.11e} +{0:.11e} +{(1-_xi)*_pzini:.11e}{" "*2}{(1-_xi)*_pzini:.11e}{" "*2}{_m0:.11e} {0:.4e} {9:.4e}\n')
+            _event.insert(_pupos,' '*5+f'{_id1}{" "*2}1    0    0    0    0 +{0:.10e} +{0:.10e} +{(1-_xi)*_pzinip:.10e}{" "*1}{(1-_xi)*_pzinip:.10e}{" "*1}{_m0:.10e} {0:.4e} {9:.4e}\n')
     for _xi in _pu_protons[1]:
         if _generator == 'superchic':
-            _event.insert(_i+1,' '*13+f'2212{" "*8}1    0    0    0    0 {0:.9e} {0:.9e} -{(1-_xi)*_pzini:.9e}  {(1-_xi)*_pzini:.9e}  {0:.9e} 0. 9.\n')
+            _event.insert(_pupos,' '*13+f'2212{" "*8}1    0    0    0    0 {0:.9e} {0:.9e} -{(1-_xi)*_pzinim:.9e}  {(1-_xi)*_pzinim:.9e}  {0:.9e} 0. 9.\n')
         if _generator == 'madgraph':
-            _event.insert(_i+1,' '*5+f'2212{" "*2}1    0    0    0    0 +{0:.11e} +{0:.11e} -{(1-_xi)*_pzini:.11e}{" "*2}{(1-_xi)*_pzini:.11e}{" "*2}{_m0:.11e} {0:.4e} {9:.4e}\n')
+            _event.insert(_pupos,' '*5+f'{_id2}{" "*2}1    0    0    0    0 +{0:.10e} +{0:.10e} -{(1-_xi)*_pzinim:.10e}{" "*1}{(1-_xi)*_pzinim:.10e}{" "*1}{_m0:.10e} {0:.4e} {9:.4e}\n')
     _event = update_event(_event, int(len(_pu_protons[0])+len(_pu_protons[1])))
     return _event
