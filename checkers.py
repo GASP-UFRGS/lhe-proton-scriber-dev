@@ -4,7 +4,7 @@ def check_args(_generator):
     # Receives file path, generator of origin and particle IDs as arguments
     if len(sys.argv) < 5:
         print('Missing arguments')
-        print('Syntax: python3 LHE-Proton-Writer.py <path of .lhe file> <generator of origin> <pileup:True/False> <IDs>')
+        print('Syntax: python3 proton-scriber.py <path of .lhe file> <generator of origin> <pileup:True/False> <IDs>')
         sys.exit()
     if not _generator == 'madgraph' or _generator == 'superchic':
         print('<<'+_generator+'>> generator unsupported. Only "madgraph" and "superchic" are supported. Exiting.')
