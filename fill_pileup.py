@@ -48,13 +48,25 @@ def fill_puprotons(_event,_generator,_pzinip,_pzinim,_m0,_id1,_id2):
     _pupos = _event.index('<mgrwt>\n')
     for _xi in _pu_protons[0]:
         if _generator == 'superchic':
-            _event.insert(_pupos, ' '*13+f'2212{" "*8}1    0    0    0    0 {0:.9e} {0:.9e} +{(1-_xi)*_pzinip:.9e}  {(1-_xi)*_pzinip:.9e}  {0:.9e} 0. 9.\n')
+            _event.insert(
+                _pupos,
+                ' '*13+f'2212{" "*8}1    0    0    0    0 {0:.9e} {0:.9e} +{(1-_xi)*_pzinip:.9e}  {(1-_xi)*_pzinip:.9e}  {0:.9e} 0. 9.\n'
+            )
         if _generator == 'madgraph':
-            _event.insert(_pupos,' '*5+f'{_id1}{" "*2}1    0    0    0    0 +{0:.10e} +{0:.10e} +{(1-_xi)*_pzinip:.10e}{" "*1}{(1-_xi)*_pzinip:.10e}{" "*1}{_m0:.10e} {0:.4e} {9:.4e}\n')
+            _event.insert(
+                _pupos,
+                f'{" " * (9 - len(str(_id1)))}{_id1}  1    0    0    0    0 +{0:.10e} +{0:.10e} +{(1-_xi)*_pzinip:.10e} {(1-_xi)*_pzinip:.10e} {_m0:.10e} {0:.4e} {9:.4e}\n',
+            )
     for _xi in _pu_protons[1]:
         if _generator == 'superchic':
-            _event.insert(_pupos,' '*13+f'2212{" "*8}1    0    0    0    0 {0:.9e} {0:.9e} -{(1-_xi)*_pzinim:.9e}  {(1-_xi)*_pzinim:.9e}  {0:.9e} 0. 9.\n')
+            _event.insert(
+                _pupos,
+                ' '*13+f'2212{" "*8}1    0    0    0    0 {0:.9e} {0:.9e} -{(1-_xi)*_pzinim:.9e}  {(1-_xi)*_pzinim:.9e}  {0:.9e} 0. 9.\n'
+            )
         if _generator == 'madgraph':
-            _event.insert(_pupos,' '*5+f'{_id2}{" "*2}1    0    0    0    0 +{0:.10e} +{0:.10e} -{(1-_xi)*_pzinim:.10e}{" "*1}{(1-_xi)*_pzinim:.10e}{" "*1}{_m0:.10e} {0:.4e} {9:.4e}\n')
+            _event.insert(
+                _pupos,
+                f'{" " * (9 - len(str(_id2)))}{_id2}  1    0    0    0    0 +{0:.10e} +{0:.10e} -{(1-_xi)*_pzinim:.10e} {(1-_xi)*_pzinim:.10e} {_m0:.10e} {0:.4e} {9:.4e}\n',
+            )
     _event = update_event(_event, int(len(_pu_protons[0])+len(_pu_protons[1])))
     return _event
