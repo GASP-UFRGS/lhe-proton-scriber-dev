@@ -23,16 +23,12 @@ def write_protons(_event,_sign,_generator,_id1,_id2):
     return _event
 
 if __name__ == "__main__":
+    # Gather input info
+    inputfile,generator,pileup,ID = checkers.check_args()
     # Set proton mass
     m0 = setters.set_proton_mass()
-    # Collect args
-    inputfile = sys.argv[1]
-    generator = sys.argv[2].lower()
-    pileup = sys.argv[3]
-    ID = sys.argv[4:]
-    # Gather definitions
+    # Set info
     outputfile = 'new_'+inputfile
-    printinvm = checkers.check_args(generator)
     end,flag0,flag1,header,einip,einim,pzinip,pzinim,id1,id2 = setters.set_energy(inputfile,generator)
     # Start event processing
     event = []
