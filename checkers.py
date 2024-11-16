@@ -1,4 +1,5 @@
 import sys
+import os
 
 def check_args():
     # Receives file path, generator of origin and particle IDs as arguments
@@ -14,7 +15,7 @@ def check_args():
 
 def collect(_args):
     # Collect args
-    _inputfile = _args[1]
+    _inputfile = os.path.basename(_args[1])
     _generator = _args[2].lower()
     _tag = _args[3]
     _pileup = _args[4]
