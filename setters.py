@@ -24,10 +24,8 @@ def set_energy(_inputfile,_generator):
             _zion1 = _ionline1[0].split()[0]
             _ionline2 = [_ion2 for _ion2 in _lines if "nb_proton2" in _ion2]
             _zion2 = _ionline2[0].split()[0]
-            print(_zion1+" --- "+_zion2)
             _id1 = 2212 if int(_zion1) == 1 else 92212
             _id2 = 2212 if int(_zion2) == 1 else 92212
-            print(str(_id1)+" --- "+str(_id2))
             if int(_zion1) > 1 or int(_zion2) > 1:
                 print("This is a proton-ion collision")
             if int(_zion1) >1 and int(_zion2) > 1:
