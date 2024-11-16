@@ -42,7 +42,7 @@ def update_event(_event, _i):
     _event[1] = ' '.join(second_element) + '\n'
     return _event
 
-def fill_puprotons(_event,_generator,_pzinip,_pzinim,_m0,_id1,_id2):
+def fill_puprotons(_event,_generator,_id1,_id2,_pzinip,_pzinim,_m0):
     i=0
     _pu_protons = draw()
     _pupos = _event.index('<mgrwt>\n')

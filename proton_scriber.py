@@ -8,51 +8,68 @@ import write_protons
 
 if __name__ == "__main__":
     # Gather input info
-    inputfile,generator,tag,pileup,ID = checkers.check_args()
+    inputs = checkers.check_args()
     # Set proton mass
     m0 = setters.set_proton_mass()
     # Set info
-    outputfile = tag+"_"+inputfile
-    end,flag0,flag1,header,einip,einim,pzinip,pzinim,id1,id2 = setters.set_energy(inputfile,generator)
+    outputfile = inputs["tag"]+"_"+inputs["inputfile"]
+    kinematics = setters.set_energy(inputs["inputfile"],inputs["generator"])
     # Start event processing
     event = []
     ofile = open(outputfile, 'w')
-    with open(inputfile, 'r+') as ifile:
+    with open(inputs["inputfile"], 'r+') as ifile:
         total_lines = checkers.num_lines(os.path.basename(ifile.name))
         total_events = checkers.count_events_in_lhe(os.path.basename(ifile.name))
         with tqdm(total=total_events, desc="Processing events") as pbar:
             for index, line in enumerate(ifile):
-                while line != end:
+                while line != kinematics["endfile"]:
                     line = ifile.readline()
-                    if line == flag0:
+                    if line == kinematics["evi"]:
                         event.append(line)
-                        while line.strip() != flag1.strip():
+                        while line.strip() != kinematics["evf"].strip():
                             line = ifile.readline()
                             event.append(line)
                         for i in range(len(event)):
-                            if event[i].split()[0] in ID and event[i].split()[1] == '-1':
+                            if event[i].split()[0] in inputs["ids"] and event[i].split()[1] == '-1':
                                 # Updating number of particles on header
                                 neweventheader = event[1].split()
-                                event = checkers.check_header(event,neweventheader,generator)
+                                event = checkers.check_header(event,neweventheader,inputs["generator"])
                                 # Creating the 4-momentum vector
                                 line = event[i].split()
-                                px = f'{-eval(line[6]):.9e}' if -eval(line[6]) < 0 else f'+{-eval(line[6]):.9e}'
-                                py = f'{-eval(line[7]):.9e}' if -eval(line[7]) < 0 else f'+{-eval(line[7]):.9e}'
+                                fourv = {}
+                                fourv["mass"] = m0
+                                fourv["px"] = f'{-eval(line[6]):.9e}' if -eval(line[6]) < 0 else f'+{-eval(line[6]):.9e}'
+                                fourv["py"] = f'{-eval(line[7]):.9e}' if -eval(line[7]) < 0 else f'+{-eval(line[7]):.9e}'
                                 pzf = eval(line[8])
                                 ef = eval(line[9])
                                 # Check proton direction via pz sign
                                 sign = (pzf/abs(pzf))
                                 if sign > 0:
-                                    pzp = pzinip*sign - pzf
-                                    ep = einip - ef
+                                    fourv["pzproton"] = kinematics["pzini_plus"]*sign - pzf
+                                    fourv["eproton"] = kinematics["ebeam_plus"] - ef
                                 else:
-                                    pzp = pzinim*sign - pzf
-                                    ep = einim - ef
+                                    fourv["pzproton"] = kinematics["pzini_minus"]*sign - pzf
+                                    fourv["eproton"] = kinematics["ebeam_minus"] - ef
                                 # Add protons to the output file if IDs given
-                                event = write_protons.write_protons(event,sign,generator,id1,id2,px,py,pzp,ep,m0)
+                                event = write_protons.write_protons(
+                                                                    event,
+                                                                    sign,
+                                                                    inputs["generator"],
+                                                                    kinematics["idp1"],
+                                                                    kinematics["idp2"],
+                                                                    fourv,
+                                                                   )
                         # Check and adds pileup
-                        if (pileup == 'true' or pileup == "True"):
-                            event = fill_pileup.fill_puprotons(event,generator,pzinip,pzinim,m0,id1,id2)
+                        if (inputs["pileup"] == 'true' or inputs["pileup"] == "True"):
+                            event = fill_pileup.fill_puprotons(
+                                                                event,
+                                                                inputs["generator"],
+                                                                kinematics["idp1"],
+                                                                kinematics["idp2"],
+                                                                kinematics["pzini_plus"],
+                                                                kinematics["pzini_minus"],
+                                                                m0
+                                                              )
                         for nl in event:
                             # Write new event to output file
                             ofile.write(nl)
