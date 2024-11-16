@@ -49,7 +49,7 @@ if __name__ == "__main__":
                                     pzp = pzinim*sign - pzf
                                     ep = einim - ef
                                 # Add protons to the output file if IDs given
-                                event = write_protons(event,sign,generator,id1,id2)
+                                event = write_protons.write_protons(event,sign,generator,id1,id2,px,py,pzp,ep,m0)
                         # Check and adds pileup
                         if (pileup == 'true' or pileup == "True"):
                             event = fill_pileup.fill_puprotons(event,generator,pzinip,pzinim,m0,id1,id2)
