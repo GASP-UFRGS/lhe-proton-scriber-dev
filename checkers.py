@@ -14,13 +14,13 @@ def check_args():
     return collect(sys.argv)
 
 def collect(_args):
-    # Collect args
-    _inputfile = os.path.basename(_args[1])
-    _generator = _args[2].lower()
-    _tag = _args[3]
-    _pileup = _args[4]
-    _id = _args[5:]
-    return _inputfile,_generator,_tag,_pileup,_id
+    return {
+            "inputfile": os.path.basename(_args[1]),
+            "generator": _args[2].lower(),
+            "tag"      : _args[3],
+            "pileup"   : _args[4],
+            "ids"      : _args[5:],
+           }
 
 def syntax():
     print('Syntax: python3 proton-scriber.py <path of .lhe file> <generator> <tag> <pileup> <IDs>')

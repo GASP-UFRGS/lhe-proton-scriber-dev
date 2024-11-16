@@ -24,19 +24,24 @@ def set_energy(_inputfile,_generator):
             _zion1 = _ionline1[0].split()[0]
             _ionline2 = [_ion2 for _ion2 in _lines if "nb_proton2" in _ion2]
             _zion2 = _ionline2[0].split()[0]
-            _id1 = 2212 if int(_zion1) == 1 else 92212
-            _id2 = 2212 if int(_zion2) == 1 else 92212
+            _idp1 = 2212 if int(_zion1) == 1 else 92212
+            _idp2 = 2212 if int(_zion2) == 1 else 92212
             if int(_zion1) > 1 or int(_zion2) > 1:
                 print("This is a proton-ion collision")
             if int(_zion1) >1 and int(_zion2) > 1:
                 print("This is a ion-ion collision")
-    # Set energies:
-    _einip = _ebeam_plus         # protons initial energy z-pos
-    _einim = _ebeam_minus        # protons initial energy z-neg
-    _pzini_plus = _ebeam_plus    # protons initial pz positive 
-    _pzini_minus = _ebeam_minus  # protons initial pz negative
 
-    return _end,_flag0,_flag1,_header,_einip,_einim,_pzini_plus,_pzini_minus,_id1,_id2
+    return {
+            "endfile": _end,
+            "evi": _flag0,
+            "evf": _flag1,
+            "ebeam_plus": _ebeam_plus,
+            "ebeam_minus": _ebeam_minus,
+            "pzini_plus": _ebeam_plus,
+            "pzini_minus": _ebeam_minus,
+            "idp1": _idp1,
+            "idp2": _idp2
+           }
 
 def set_proton_mass():
     # Get the proton mass in kg
