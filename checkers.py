@@ -7,11 +7,13 @@ def check_args():
         print('Missing arguments')
         syntax()
         sys.exit()
-    _generator = sys.argv[2]
-    if not _generator == 'madgraph' or _generator == 'superchic':
-        print('<<'+_generator+'>> generator unsupported. Only "madgraph" and "superchic" are supported. Exiting.')
-        sys.exit()
+    check_mc(sys.argv[2])
     return collect(sys.argv)
+
+def check_mc(_gen):
+    if not _gen == 'madgraph' or _gen == 'superchic':
+        print('<<'+_gen+'>> generator unsupported. Only "madgraph" and "superchic" are supported. Exiting.')
+        sys.exit()
 
 def collect(_args):
     return {
