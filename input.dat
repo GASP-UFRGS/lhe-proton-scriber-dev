@@ -1,0 +1,6 @@
+[SETTINGS]
+inputfile = input.lhe
+generator = madgraph
+tag = mytag
+pileup = True
+ids = 22 22
