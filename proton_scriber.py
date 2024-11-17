@@ -8,7 +8,7 @@ import write_protons
 
 if __name__ == "__main__":
     # Gather input info
-    inputs = checkers.check_args()
+    inputs = checkers.parse_args()
     # Set proton mass
     m0 = setters.set_proton_mass()
     # Set info

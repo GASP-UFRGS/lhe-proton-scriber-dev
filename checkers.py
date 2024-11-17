@@ -1,38 +1,76 @@
 import sys
 import os
-
-def check_args():
-    # Receives file path, generator of origin and particle IDs as arguments
-    if len(sys.argv) < 6:
-        print('Missing arguments')
-        syntax()
-        sys.exit()
-    check_mc(sys.argv[2])
-    return collect(sys.argv)
-
-def check_mc(_gen):
-    if not _gen == 'madgraph' or _gen == 'superchic':
-        print('<<'+_gen+'>> generator unsupported. Only "madgraph" and "superchic" are supported. Exiting.')
-        sys.exit()
-
-def collect(_args):
-    return {
-            "inputfile": os.path.basename(_args[1]),
-            "generator": _args[2].lower(),
-            "tag"      : _args[3],
-            "pileup"   : _args[4],
-            "ids"      : _args[5:],
-           }
+import configparse
+import argparse
 
 def syntax():
-    print('Syntax: python3 proton-scriber.py <path of .lhe file> <generator> <tag> <pileup> <IDs>')
+    print("Syntax: python3 proton-scriber.py -i <path of .lhe file> -mc <generator> --tag <tag> -pu <pileup> --ids <IDs>")
     print("")
-    print(  "<path of .lhe file> -- path to LHE input file")
-    print(  "<generator> -- only madgraph or superchic options supported")
-    print(  "<tag> -- prefix to be added to the output filename")
-    print(  "<pileup> -- True or False for adding pileup protons")
-    print(  "<IDs> -- PDG ID of particles for kinematics of scattered proton, e.g., '22 22' ")
-    print("") 
+    print("  -c, --config: configuration file for input parameters")
+    print("  -i, --inputfile: Path to LHE input file")
+    print("  -mc, --generator: Generator type (madgraph or superchic)")
+    print("  --tag: Prefix to be added to the output filename")
+    print("  -pu, --pileup: Add pileup protons (True/False)")
+    print("  --ids: PDG IDs of particles, separated by space, e.g., '22 22'")
+    print("")
+
+def parse_config():
+    config = configparser.ConfigParser()
+    config.read(config_file)
+    return {
+        "inputfile": config.get("SETTINGS", "inputfile", fallback=None),
+        "generator": config.get("SETTINGS", "generator", fallback=None),
+        "tag": config.get("SETTINGS", "tag", fallback=None),
+        "pileup": config.get("SETTINGS", "pileup", fallback=None),
+        "ids": config.get("SETTINGS", "ids", fallback=None)
+    }
+
+def parse_args():
+    # define the argument parser
+    parser = argparse.ArgumentParser(
+        description="Proton-scriber script for handling .lhe files.",
+        usage="python3 proton-scriber.py -i <path of .lhe file> -mc <generator> --tag <tag> -pu <pileup> --ids <IDs>"
+    )
+ 
+    # required positional arguments
+    parser.add_argument("-c", "--config", help="Path to configuration file")
+    parser.add_argument("-i", "--inputfile", help="Path to LHE input file")
+    parser.add_argument("-mc", "--generator", choices=["madgraph", "superchic"], help="Generator type (madgraph or superchic)")
+    parser.add_argument("--tag", help="Prefix to be added to the output filename", default="NEW_")
+    parser.add_argument("-pu", "--pileup", choices=["True", "False"], help="Add pileup protons (True/False)", default=False)
+    parser.add_argument("--ids", help="PDG IDs of particles, separated by space, e.g., \"22 22\"", default="0")
+
+    # parse arguments
+    args = parser.parse_args()
+
+    # check if a configuration file is provided
+    config_args = {}
+    if args.config:
+        config_args = parse_config(args.config)
+
+    # combine arguments from both command-line and config file
+    _inputfile = os.path.basename(args.inputfile) if args.inputfile else os.path.basename(config_args.get("inputfile", ""))
+    _generator = args.generator or config_args.get("generator")
+    _tag = args.tag or config_args.get("tag")
+    _pileup = args.pileup or config_args.get("pileup")
+    _ids = args.ids or config_args.get("ids")
+
+    # Validate required arguments
+    if not all([_inputfile, _generator]) or len(sys.argv) == 1:
+        print("Error: Missing required arguments.")
+        syntax()
+        sys.exit(1)
+
+    # parse PDG IDs as a list
+    _ids_list = args.ids.split()
+
+    return {
+            "inputfile": _inputfile,
+            "generator": _generator,
+            "tag"      : _tag,
+            "pileup"   : _pileup,
+            "ids"      : _ids_list
+           }
 
 def check_header(_event,_newheader,_generator):
     if _generator == 'superchic':
