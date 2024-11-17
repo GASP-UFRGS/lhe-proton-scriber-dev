@@ -3,3 +3,6 @@ os
 numpy
 scipy.constants
 tqdm
+configparse
+argparse
+random
