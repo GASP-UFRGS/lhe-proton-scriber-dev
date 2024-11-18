@@ -1,7 +1,7 @@
 from scipy.constants import physical_constants, giga, c, eV
 
 def set_energy(_inputfile,_generator):
-    # Setting flags according to chosen generator
+    # setting flags according to chosen generator
     if (_generator == 'madgraph'):
         _flag0 = '<event>\n'
         _flag1 = '</event>\n'
@@ -12,7 +12,7 @@ def set_energy(_inputfile,_generator):
         _flag1 = ' </event>\n'
         _header = ' <init>\n'
         _end = ' </LesHouchesEvents>\n'
-    # Create list of lines from the LHE file and if needed finding the beginning of events 
+    # create list of lines from the LHE file and if needed finding the beginning of events 
     with open(_inputfile, 'r+') as _f:
         _lines = _f.readlines()
         _index = _lines.index(_header)
@@ -44,9 +44,9 @@ def set_energy(_inputfile,_generator):
            }
 
 def set_proton_mass():
-    # Get the proton mass in kg
+    # get the proton mass in kg
     _proton_mass_kg = physical_constants['proton mass'][0]
-    # Convert to GeV using E = mc^2, 1 eV = 1.602176634e-19 Joules
+    # convert to GeV using E = mc^2, 1 eV = 1.602176634e-19 Joules
     _proton_mass_GeV = (_proton_mass_kg * c**2) / eV / giga
     print(f"Proton mass in GeV: {_proton_mass_GeV:.6f} GeV")
     return _proton_mass_GeV

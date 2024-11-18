@@ -1,10 +1,9 @@
 import os
 from tqdm import tqdm
 
-import fill_pileup
+import fill_protons
 import checkers
 import setters
-import write_protons
 
 if __name__ == "__main__":
     # Gather input info
@@ -51,28 +50,28 @@ if __name__ == "__main__":
                                     fourv["pzproton"] = kinematics["pzini_minus"]*sign - pzf
                                     fourv["eproton"] = kinematics["ebeam_minus"] - ef
                                 # Add protons to the output file if IDs given
-                                event = write_protons.write_protons(
-                                                                    event,
-                                                                    sign,
-                                                                    inputs["generator"],
-                                                                    kinematics["idp1"],
-                                                                    kinematics["idp2"],
-                                                                    fourv,
-                                                                   )
-                        # Check and adds pileup
-                        if (inputs["pileup"] == 'true' or inputs["pileup"] == "True"):
-                            event = fill_pileup.fill_puprotons(
+                                event = fill_protons.add_signal(
                                                                 event,
+                                                                sign,
                                                                 inputs["generator"],
                                                                 kinematics["idp1"],
                                                                 kinematics["idp2"],
-                                                                kinematics["pzini_plus"],
-                                                                kinematics["pzini_minus"],
-                                                                m0
-                                                              )
-                        for nl in event:
+                                                                fourv,
+                                                               )
+                        # Check and adds pileup
+                        if (inputs["pileup"] == 'true' or inputs["pileup"] == "True"):
+                            event = fill_protons.add_pileup(
+                                                            event,
+                                                            inputs["generator"],
+                                                            kinematics["idp1"],
+                                                            kinematics["idp2"],
+                                                            kinematics["pzini_plus"],
+                                                            kinematics["pzini_minus"],
+                                                            m0
+                                                           )
+                        for newline in event:
                             # Write new event to output file
-                            ofile.write(nl)
+                            ofile.write(newline)
                         # Clean event list for next iteration
                         event.clear()
                         pbar.update(1)

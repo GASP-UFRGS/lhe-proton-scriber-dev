@@ -55,7 +55,7 @@ def parse_args():
     _pileup = args.pileup or config_args.get("pileup")
     _ids = args.ids or config_args.get("ids")
 
-    # Validate required arguments
+    # validate required arguments
     if not all([_inputfile, _generator]) or len(sys.argv) == 1:
         print("Error: Missing required arguments.")
         syntax()
