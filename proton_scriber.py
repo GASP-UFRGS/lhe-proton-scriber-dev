@@ -1,3 +1,8 @@
+import warnings
+
+warnings.filterwarnings("ignore", message="failed to import yaml")
+warnings.filterwarnings("ignore", message="failed to import toml")
+
 import os
 from tqdm import tqdm
 
