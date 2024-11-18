@@ -1,8 +1,6 @@
-sys
-os
 numpy
-scipy.constants
+scipy
 tqdm
 configparse
 argparse
-random
+
