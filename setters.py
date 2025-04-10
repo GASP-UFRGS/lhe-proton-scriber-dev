@@ -1,4 +1,5 @@
 from scipy.constants import physical_constants, giga, c, eV
+import re
 
 def set_energy(_inputfile,_generator):
     # setting flags according to chosen generator
@@ -20,16 +21,35 @@ def set_energy(_inputfile,_generator):
         _ebeam_plus  = float(_line[2])
         _ebeam_minus = float(_line[3])
         if _generator == "madgraph":
-            _ionline1 = [_ion1 for _ion1 in _lines if "nb_proton1" in _ion1]
-            _zion1 = _ionline1[0].split()[0]
-            _ionline2 = [_ion2 for _ion2 in _lines if "nb_proton2" in _ion2]
-            _zion2 = _ionline2[0].split()[0]
-            _idp1 = 2212 if int(_zion1) == 1 else 92212
-            _idp2 = 2212 if int(_zion2) == 1 else 92212
-            if int(_zion1) > 1 or int(_zion2) > 1:
-                print("This is a proton-ion collision")
-            if int(_zion1) >1 and int(_zion2) > 1:
-                print("This is a ion-ion collision")
+            if "nb_proton" in _lines:
+                _ionline1 = [_ion1 for _ion1 in _lines if "nb_proton1" in _ion1]
+                _zion1 = _ionline1[0].split()[0]
+                _ionline2 = [_ion2 for _ion2 in _lines if "nb_proton2" in _ion2]
+                _zion2 = _ionline2[0].split()[0]
+                _idp1 = 2212 if int(_zion1) == 1 else 92212
+                _idp2 = 2212 if int(_zion2) == 1 else 92212
+                if int(_zion1) > 1 or int(_zion2) > 1:
+                    print("This is a proton-ion collision")
+                if int(_zion1) > 1 and int(_zion2) > 1:
+                    print("This is a ion-ion collision")
+            else:
+                _idbeam1, _idbeam2 = None, None
+                pattern = re.compile(r"^\s*(\d+)\s*=\s*(lpp1|lpp2)")
+                for line in _lines:
+                    match = pattern.match(line)
+                    if match:
+                        value = int(match.group(1))
+                        beam = match.group(2)
+                        if beam == "lpp1":
+                            _idbeam1 = value
+                        elif beam == "lpp2":
+                            _idbeam2 = value
+                if _idbeam1 == 1 and _idbeam2 == 1:
+                    print("This is a proton-proton collision")
+                if (_idbeam1 == 1 and _idbeam2 == -1) or (_idbeam1 == -1 and _idbeam2 == 1):
+                    print("This is a proton-antiproton collision")
+            if _idbeam1 is None or _idbeam2 is None:
+                raise ValueError("No incoming particles found in the input file!")
 
     return {
             "endfile": _end,
