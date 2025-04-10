@@ -67,14 +67,18 @@ def set_energy(_inputfile, _generator):
                     raise ValueError("No incoming particles found in the input file!")
 
                 if _idbeam1 in beam_type_map:
-                    _idp1 = beam_type_map[_idbeam1][0]
+                    # Treat photon (2) and scalar (5) as proton (2212)
+                    _idp1 = 2212 if _idbeam1 in [2, 5] else beam_type_map[_idbeam1][0]
                 if _idbeam2 in beam_type_map:
-                    _idp2 = beam_type_map[_idbeam2][0]
-
+                    _idp2 = 2212 if _idbeam2 in [2, 5] else beam_type_map[_idbeam2][0]
+                # Determine collision type to print
                 if _idbeam1 in beam_type_map and _idbeam2 in beam_type_map:
-                    name1 = beam_type_map[_idbeam1][1]
-                    name2 = beam_type_map[_idbeam2][1]
-                    print(f"This is a {name1}-{name2} collision")
+                    if _idbeam1 in [2, 5] and _idbeam2 in [2, 5]:
+                        print("This is an exclusive proton-proton collision")
+                    else:
+                        name1 = beam_type_map[_idbeam1][1]
+                        name2 = beam_type_map[_idbeam2][1]
+                        print(f"This is a {name1}-{name2} collision")
 
     return {
         "endfile": _end,
