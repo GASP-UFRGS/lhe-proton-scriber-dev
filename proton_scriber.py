@@ -21,6 +21,12 @@ if __name__ == "__main__":
     # Start event processing
     event = []
     ofile = open(outputfile, 'w')
+    # Write the header portion (before the first event)
+    with open(inputs["inputfile"], 'r') as ifile_header:
+        for line in ifile_header:
+            ofile.write(line)
+            if line.strip() == kinematics["evi"].strip():
+                break  # Stop once first event tag is hit
     with open(inputs["inputfile"], 'r+') as ifile:
         total_lines = checkers.num_lines(os.path.basename(ifile.name))
         total_events = checkers.count_events_in_lhe(os.path.basename(ifile.name))
