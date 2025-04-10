@@ -2,18 +2,20 @@ from scipy.constants import physical_constants, giga, c, eV
 import re
 
 def set_energy(_inputfile,_generator):
-    # setting flags according to chosen generator
-    if (_generator == 'madgraph'):
+    # Setting flags according to chosen generator
+    if _generator == 'madgraph':
         _flag0 = '<event>\n'
         _flag1 = '</event>\n'
         _header = '<init>\n'
         _end = '</LesHouchesEvents>\n'
-    if (_generator == 'superchic'):
+    elif _generator == 'superchic':
         _flag0 = ' <event>\n'
         _flag1 = ' </event>\n'
         _header = ' <init>\n'
         _end = ' </LesHouchesEvents>\n'
-    # create list of lines from the LHE file and if needed finding the beginning of events 
+    else:
+        raise ValueError("Unsupported generator type")
+
     with open(_inputfile, 'r+') as _f:
         _lines = _f.readlines()
         _index = _lines.index(_header)
